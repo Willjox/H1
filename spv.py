@@ -4,26 +4,22 @@ l = (b'')
 r = (b'')
 h = hashlib.sha1()
 with open('path') as fp:
-     prev = int(fp.readline()[:-1],16).to_bytes(20, byteorder='big', signed='False')
-     print(prev.hex())
+     t = fp.readline()[:-1]
+     prev = bytearray.fromhex(t)
+
      for line in fp:
-         if line == '':
-             break
-         line = line[:-1]
-         pos, line = line[:1], line[1:]
+         pos, line = line[:1], line[1:-1]
          print(line)
-         print(line[:-1])
-         i = int(line[2:],16).to_bytes(20, byteorder='big', signed='False')
+         hexToByte = bytearray.fromhex(line)
+
          if pos == 'R':
-             print(i.hex, "HÖGER")
-             r = i
+             r = hexToByte
              l = prev
          else:
-             l = i
+             l = hexToByte
              r = prev
-             print(i, "VÄNSTER")
 
-         h.update(l)
-         h.update(r)
+         h.update(l+r)
          prev = h.digest()
+         h = hashlib.sha1()
      print('Root: ',prev.hex())

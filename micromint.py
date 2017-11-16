@@ -1,5 +1,6 @@
 import hashlib
 import random
+import sys
 #u =int(input("u = "))
 #k =int(input("k = "))
 #c =int(input("c = "))
@@ -10,10 +11,10 @@ def mint(u,k,c):
     p = 0;
     h = hashlib.md5()
     korg =  [0]*(2**u)
-    random.seed()
+    rand = random.SystemRandom()
 
     while i < c:
-        x = random.getrandbits(28)
+        x = rand.randint(0, 2**31)
         h.update(bytes(x))
         boll = h.digest()[0:bu]
         iboll = int.from_bytes(boll,byteorder = 'big' ,signed =False)

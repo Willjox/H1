@@ -5,7 +5,7 @@ def hasher(left, right):
 
 def hashData(data):
     byteData = bytearray.fromhex(data)
-    return hashlib.sha1(byteData).digest()
+    return byteData
 
 def checkEven(list):
     if len(list)%2 != 0:
@@ -13,22 +13,22 @@ def checkEven(list):
     return list
 
 def climbTree(base):
-        while(len(base) != 0):
-            left = base.pop(0)
-            right = base.pop(0)
-            parent = node(left.getHash(),right.getHash())
-            parents.append(parent)
+    parents = []
+    while(len(base) != 0):
+        left = base.pop(0)
+        right = base.pop(0)
+        parent = node(left.getHash(),right.getHash())
+        parents.append(parent)
 
-        return parents
+    return parents
 def climbTreeRoot(base):
-            while(len(base) != 0):
-                left = base.pop(0)
-                right = base.pop(0)
-                print('poppop')
-                print(len(base))
-                parent = node(left,right)
-                parents.append(parent)
-            return parents
+    parents = []
+    while(len(base) != 0):
+        left = base.pop(0)
+        right = base.pop(0)
+        parent = node(left,right)
+        parents.append(parent)
+    return parents
 
 class node:
     def __init__(self, left, right):
@@ -44,7 +44,6 @@ class node:
 
 currentDepth = []
 stem = []
-parents = []
 
 with open('leaves') as fp:
     i = int(fp.readline())
@@ -58,12 +57,9 @@ with open('leaves') as fp:
     stem.append(currentDepth)
     currentDepth = checkEven(currentDepth)
     currentDepth = climbTreeRoot(currentDepth)
-    print("löv klart")
-    print(len(currentDepth))
     while(len(currentDepth) != 1):
         currentDepth = checkEven(currentDepth)
-        print('bajs!' , len(currentDepth))
         currentDepth = climbTree(currentDepth)
         stem.append(currentDepth)
-        print("Depth: " + len(stem))
-    print("root: " + stem[-1].hex())
+        print("Depth: " , len(stem))
+    print("root: " , currentDepth[-1].getHash().hex())

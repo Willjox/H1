@@ -1,7 +1,7 @@
 import hashlib
 
 def hasher(left, right):
-    return hashlib.sha1(left + right).digest()
+    return hashlib.sha1(left.getHash() + right.getHash()).digest()
 
 def hashData(data):
     byteData = bytearray.fromhex(data)
@@ -14,9 +14,10 @@ def checkEven(list):
 
 def climbTree(base):
     parents = []
-    while(len(base) != 0):
-        left = base.pop(0)
-        right = base.pop(0)
+    temp = list(base)
+    while(len(temp) != 0):
+        left = temp.pop(0)
+        right = temp.pop(0)
         parent = node(left,right,'0x0')
         left.adopt(parent)
         right.adopt(parent)
@@ -25,12 +26,13 @@ def climbTree(base):
     return parents
 def climbTreeRoot(base):
     parents = []
-    while(len(base) != 0):
-        left = node('0x0','0x0',base.pop(0))
-        right = node('0x0','0x0',base.pop(0))
-        parent = node(left.getHash(),right.getHash(),'0x0')
+    temp = list(base)
+    while(len(temp) != 0):
+        left = node('0x0','0x0',temp.pop(0))
+        right = node('0x0','0x0',temp.pop(0))
+        parent = node(left,right,'0x0')
         left.adopt(parent)
-        left.adopt(parent)
+        right.adopt(parent)
         parents.append(parent)
     return parents
 
@@ -43,6 +45,7 @@ class node:
         self.left = left
         self.right = right
         self.hash = hasher(left,right);
+        self.parent = self
 
     def adopt(self,parent):
         self.parent = parent
@@ -72,22 +75,22 @@ with open('leaves') as fp:
     currentDepth = climbTreeRoot(currentDepth)
     while(len(currentDepth) != 1):
         currentDepth = checkEven(currentDepth)
-        currentDepth = climbTree(currentDepth)
-        stem.append(currentDepth)
+        stem.append(climbTree(currentDepth))
+        currentDepth= stem[-1]
         print("Depth: " , len(stem))
     print("root: " , currentDepth[-1].getHash().hex())
     print(i)
     print(currentDepth)
     print(len(stem))
     leaf= stem[2][-1]
+    print(leaf.getHash().hex())
     k = 0
     while ((k-1) > j):
         leaf = leaf.getParent()
         k = k+1
     parent = leaf.getParent()
     if parent.getLeft() != leaf.getHash():
-        print('L', parent.getLeft().Hex()
-              )
+        print('L', parent.getLeft().getHash().hex())
     else:
         print('R',parent.getRight().hex())
 

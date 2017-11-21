@@ -1,7 +1,7 @@
 import hashlib
 
 def hasher(left, right):
-    return hashlib.sha1(left.getHash() + right.getHash()).digest()
+    return hashlib.sha1(left + right).digest()
 
 def hashData(data):
     byteData = bytearray.fromhex(data)
@@ -41,11 +41,11 @@ class node:
         if (left == '0x0'):
             self.hash = hash
             return
-
-        self.left = left
-        self.right = right
-        self.hash = hasher(left,right);
-        self.parent = self
+        else:
+            self.left = left
+            self.right = right
+            self.hash = hasher(self.left.getHash(),self.right.getHash());
+            self.parent = self
 
     def adopt(self,parent):
         self.parent = parent
@@ -68,7 +68,8 @@ with open('leaves') as fp:
     for line in fp:
         if line == '':
             break
-        currentDepth.append(hashData(line[:-1]))
+        x = node('0x0','0x0',hashData(line[:-1]))
+        currentDepth.append(x)
 
     stem.append(currentDepth)
     currentDepth = checkEven(currentDepth)
@@ -79,60 +80,19 @@ with open('leaves') as fp:
         currentDepth= stem[-1]
         print("Depth: " , len(stem))
     print("root: " , currentDepth[-1].getHash().hex())
-    print("Depth: " , len(currentDepth))
+    print(i)
+    print(currentDepth)
+    print(len(stem))
+    leaf= stem[0][i]
+    print(leaf.getHash().hex())
+    k = 0
+    while ((k) < (len(stem)-j)):
+        leaf = leaf.getParent()
+        k = k+1
+    parent = leaf.getParent()
+    if parent.getLeft() != leaf.getHash():
+        print('L', parent.getLeft().getHash().hex())
+    else:
+        print('R',parent.getRight().hex())
 
-
-
-node = stem[-1][-1]
-div = 2**(len(stem)-1)
-depth = 0
-right = 1
-
-while div >=2:
-	if  int(i/div) == 0:
-		node = node.left
-	else:
-		node = node.right
-		i = i-div
-	depth = depth + 1
-	div= int(div/2)
-	print(node.hash.hex())
-if i%2 ==0:
-	sibling = node.right
-	node = node.left
-	right = 1
-else:
-	sibling = node.left
-	node = node.right
-	right = 0
-depth = depth+1
-print(node.hash.hex())
-
-merkletree = ''
-print(stem[-1][-1].getHash().hex())
-print('')
-print("Printing the Merkle tree: ")
-print(right)
-print(sibling.hash.hex())
-while depth >= 2:
-	print(depth)
-	if node.parent.parent.getLeft().getHash() == node.parent.getHash():
-		node = node.parent.parent.getRight()
-		right = 1
-	else:
-		node = node.parent.parent.getLeft()
-		right = 0
-	depth = depth -1
-	if depth ==j:
-		if right == 1:
-			merkletree+='R'
-		else:
-			merkletree+='L'
-		merkletree+=node.hash.hex()
-		merkletree+= stem[-1][-1].hash.hex()
-		print("This is the node at depth j: ")
-	print(right)
-	print(node.hash.hex())
-print(merkletree)
-
-
+    print(leaf)

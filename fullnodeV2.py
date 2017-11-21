@@ -79,6 +79,7 @@ with open('leaves') as fp:
         currentDepth= stem[-1]
         print("Depth: " , len(stem))
     print("root: " , currentDepth[-1].getHash().hex())
+    print("Depth: " , len(currentDepth))
 
 
 
@@ -86,6 +87,7 @@ node = stem[-1][-1]
 div = 2**(len(stem)-1)
 depth = 0
 right = 1
+
 while div >=2:
 	if  int(i/div) == 0:
 		node = node.left
@@ -96,16 +98,24 @@ while div >=2:
 	div= int(div/2)
 	print(node.hash.hex())
 if i%2 ==0:
+	sibling = node.right
 	node = node.left
+	right = 1
 else:
+	sibling = node.left
 	node = node.right
+	right = 0
 depth = depth+1
 print(node.hash.hex())
 
 merkletree = ''
-right = 0
+print(stem[-1][-1].getHash().hex())
+print('')
 print("Printing the Merkle tree: ")
+print(right)
+print(sibling.hash.hex())
 while depth >= 2:
+	print(depth)
 	if node.parent.parent.getLeft().getHash() == node.parent.getHash():
 		node = node.parent.parent.getRight()
 		right = 1
@@ -121,6 +131,7 @@ while depth >= 2:
 		merkletree+=node.hash.hex()
 		merkletree+= stem[-1][-1].hash.hex()
 		print("This is the node at depth j: ")
+	print(right)
 	print(node.hash.hex())
 print(merkletree)
 

@@ -17,7 +17,7 @@ def climbTree(base):
     while(len(base) != 0):
         left = base.pop(0)
         right = base.pop(0)
-        parent = node(left.getHash(),right.getHash(),'0x0')
+        parent = node(left,right,'0x0')
         left.adopt(parent)
         right.adopt(parent)
         parents.append(parent)

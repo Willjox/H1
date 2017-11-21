@@ -16,7 +16,7 @@ def check_cardnr(cardnr):
 
 
 result = ''
-with open('numberFile') as fp:
+with open('Cards.txt') as fp:
 	for line in fp:
 		append = check_cardnr(line)
 		result+=append

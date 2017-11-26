@@ -3,92 +3,78 @@
 from pcapfile import savefile
 import ipaddress
 
-testcap = open('cia.log.1337.pcap', 'rb')
+testcap = open('cia.log.1339.pcap', 'rb')
 capfile = savefile.load_savefile(testcap, layers=2, verbose=True)
 
-nasir = "159.237.13.37" #input("Nasir adress: ")
-mixer = "94.147.150.188" #input("Mix address: " )
+nasir = "161.53.13.37" #input("Nasir adress: ")
+mixer = "11.192.206.171" #input("Mix address: " )
 partners = int(input("Number of partners: " ))
 
-msgSet = set()
-sets = []
-prev = "0.0.0.0"
-append = 0
-r = []
 
+def disjoint(testList,testSet):
+	for rx in testList:
+		if not testSet.isdisjoint(rx):
+			return False
+	return True
 def finddisjoint():
+	rdis = []
+	print(len(sets))
+
 	for rx in sets:
-		outputList=list()
-		outputList.append(rx)
-		for ry in sets:
-			appendOutput = 0
-			for rz in outputList:
-				if not rz.isdisjoint(ry):
-					appendOutput = -1
-			if appendOutput == 0:
-				print("Appending ry")
-				outputList.append(ry)
+		if disjoint(rdis,rx):
+			rdis.append(rx)
+			sets.remove(rx)
+		elif rdis == partners:
+			break
+	print(len(sets))
+	return rdis
+def parse():
+	append = 0
+	msgSet = set()
+	prev = "0.0.0.0"
+	for pkt in capfile.packets:
+		timestamp = pkt.timestamp
+		ip_src = pkt.packet.payload.src.decode('UTF8')
+		ip_dst = pkt.packet.payload.dst.decode('UTF8')
 
-			if (len(outputList) == partners):
-				print("Before returning outputlist")
-				return outputList
-	return list()
+		if ip_src == nasir:
+			append = 1
+		if ip_src == mixer and append == 1:
+			msgSet.add(ip_dst)
 
 
+		if ip_src != mixer and prev == mixer and append == 1:
+			append = 0
+			if len(msgSet) > 0:
+				sets.append(set(msgSet))
+			msgSet = set()
+		prev = ip_src
 def exclude():
-	output = list()
+	for rx in sets:
+		for ri in r:
+			if not rx.isdisjoint(ri):
+				testList = list(r)
+				testList.remove(ri)
+				if disjoint(testList,rx):
+					r.remove(ri)
+					r.append(ri.intersection(rx))
+	return
+def unionize():
+	union = set()
 	for rx in r:
-		for ry in sets:
-			if not rx.isdisjoint(ry):
-				rx = rx.intersection(ry)
-				if len(rx) == 1:
-					output.append(rx)
-				#addtoout = 0
-				#for rz in r:
-				#	if not ry.isdisjoint(rz):
-				#		addtoout+= 1
-				#if addtoout == 1:
-				#	print(rx)
-				#	rx = ry.intersection(rx)
-	print(output)
-	R = set()
-	for xy in output:
-		R = R.union(xy)
-	print(R)
-	output = list()
-	output.append(R)
-	return R
-
+		union = union.union(rx)
+	return union
 def addIP(finalSet):
 	ipint = 0
 	while len(finalSet) !=0:
 		v = int.from_bytes(ipaddress.IPv4Address(finalSet.pop()).packed, byteorder='big', signed=False)
 		print(v)
 		ipint = ipint + v
-	print(ipint)	
+	print(ipint)
 	return ipint
 
-
-for pkt in capfile.packets:
-	timestamp = pkt.timestamp
-	ip_src = pkt.packet.payload.src.decode('UTF8')
-	ip_dst = pkt.packet.payload.dst.decode('UTF8')
-
-	if ip_src == nasir:
-		append = 1
-	if ip_src == mixer and append == 1:
-		msgSet.add(ip_dst)
-
-
-	if ip_src != mixer and prev == mixer and append == 1:
-		append = 0
-		if len(msgSet) > 0:
-			sets.append(set(msgSet))
-		msgSet = set()
-	prev = ip_src
-
+sets = []
+parse()
 r = finddisjoint()
-#print(r)
-finalSet = exclude()
-#print(r)
-print(addIP(finalSet))
+exclude()
+print(addIP(unionize()))

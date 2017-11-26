@@ -5,8 +5,10 @@ import ipaddress
 
 testcap = open('cia.log.1337.pcap', 'rb')
 capfile = savefile.load_savefile(testcap, layers=2, verbose=True)
-nasir = input("Nasir adress: ")
-mixer = input("mix address: " )
+
+nasir = "159.237.13.37" #input("Nasir adress: ")
+mixer = "94.147.150.188" #input("Mix address: " )
+partners = int(input("Number of partners: " ))
 
 msgSet = set()
 sets = []
@@ -15,25 +17,56 @@ append = 0
 r = []
 
 def finddisjoint():
-	disjoint = []
-	for ry in sets:
-		for rx in sets:
-			if ry.isdisjoint(rx):
-
-				disjoint.append(ry)
-				disjoint.append(rx)
-				return disjoint
-def exclude():
 	for rx in sets:
-		if not r[0].isdisjoint(rx) and r[1].isdisjoint(rx):
-			r[0] = r[0].intersection(rx)
-		elif  r[0].isdisjoint(rx) and not r[1].isdisjoint(rx):
-			r[1] = r[1].intersection(rx)
-	result = r[0].union(r[1])
-	return result
+		outputList=list()
+		outputList.append(rx)
+		for ry in sets:
+			appendOutput = 0
+			for rz in outputList:
+				if not rz.isdisjoint(ry):
+					appendOutput = -1
+			if appendOutput == 0:
+				print("Appending ry")
+				outputList.append(ry)
+
+			if (len(outputList) == partners):
+				print("Before returning outputlist")
+				return outputList
+	return list()
 
 
+def exclude():
+	output = list()
+	for rx in r:
+		for ry in sets:
+			if not rx.isdisjoint(ry):
+				rx = rx.intersection(ry)
+				if len(rx) == 1:
+					output.append(rx)
+				#addtoout = 0
+				#for rz in r:
+				#	if not ry.isdisjoint(rz):
+				#		addtoout+= 1
+				#if addtoout == 1:
+				#	print(rx)
+				#	rx = ry.intersection(rx)
+	print(output)
+	R = set()
+	for xy in output:
+		R = R.union(xy)
+	print(R)
+	output = list()
+	output.append(R)
+	return R
 
+def addIP(finalSet):
+	ipint = 0
+	while len(finalSet) !=0:
+		v = int.from_bytes(ipaddress.IPv4Address(finalSet.pop()).packed, byteorder='big', signed=False)
+		print(v)
+		ipint = ipint + v
+	print(ipint)	
+	return ipint
 
 
 for pkt in capfile.packets:
@@ -55,7 +88,7 @@ for pkt in capfile.packets:
 	prev = ip_src
 
 r = finddisjoint()
-result = exclude()
-ipint1 = int.from_bytes(ipaddress.IPv4Address(result.pop()).packed, byteorder='big', signed=False)
-ipint2 = int.from_bytes(ipaddress.IPv4Address(result.pop()).packed, byteorder='big', signed=False)
-print(ipint1+ipint2)
+#print(r)
+finalSet = exclude()
+#print(r)
+print(addIP(finalSet))

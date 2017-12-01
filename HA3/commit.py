@@ -22,6 +22,7 @@ def iterate(confidence):
         if len(results) > 10:
             s = stddev(results,avg)
             currentconfidence = s/(math.sqrt(len(results)))
+            print("currentconfidence: " , currentconfidence)
     return avg
 def binding():
     i = 0

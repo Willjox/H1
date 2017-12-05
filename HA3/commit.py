@@ -22,7 +22,7 @@ def iterate(confidence):
     currentconfidence = 100000
     results = []
     while confidence < currentconfidence:
-        results.append(binding(16))
+        results.append(binding(14))
         avg = sum(results)/len(results)
         if len(results) > 10:
             s = stddev(results,avg)
@@ -40,16 +40,13 @@ def binding(l):
     commit.frombytes(k)
     commit.append(True)
 
-    lb = (l//8) + 1
-    strip = l%8
 
-
-    x = hashlib.sha1(commit.tobytes()).digest()[:lb]
+    x = hashlib.sha1(commit.tobytes()).digest()
     xb = bitarray()
     xb.frombytes(x)
-    while xb.length() > l:
-        xb.pop(-1)
+    xb = xb[:l]
     x = xb.tobytes()
+    print(xb.length())
     print(x.hex())
     i = 0
     y = bytearray()
@@ -63,12 +60,12 @@ def binding(l):
         commit = bitarray()
         commit.frombytes(k)
         commit.append(False)
-        y = hashlib.sha1(commit.tobytes()).digest()[:lb]
+        y = hashlib.sha1(commit.tobytes()).digest()
         yb = bitarray()
         yb.frombytes(y)
-        while yb.length() > l:
-            yb.pop(-1)
+        yb = yb[:l]
         y = yb.tobytes()
+        #print(yb.length())
         i = i + 1
         #print(i, " ",y.hex(),x.hex(), yb,xb, "\r",end='')
     print(i)

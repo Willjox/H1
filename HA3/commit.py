@@ -22,7 +22,7 @@ def iterate(confidence):
     currentconfidence = 100000
     results = []
     while confidence < currentconfidence:
-        results.append(binding())
+        results.append(binding(16))
         avg = sum(results)/len(results)
         if len(results) > 10:
             s = stddev(results,avg)
@@ -31,26 +31,47 @@ def iterate(confidence):
             print(avg)
 
     return avg
-def binding():
-    l = 2
+
+def binding(l):
+
     rand = random.SystemRandom()
     k = (rand.getrandbits(16)).to_bytes(2, byteorder='big')
     commit = bitarray()
     commit.frombytes(k)
     commit.append(True)
-    x = hashlib.sha1(commit.tobytes()).digest()[:l]
+
+    lb = (l//8) + 1
+    strip = l%8
+
+
+    x = hashlib.sha1(commit.tobytes()).digest()[:lb]
+    xb = bitarray()
+    xb.frombytes(x)
+    while xb.length() > l:
+        xb.pop(-1)
+    x = xb.tobytes()
+    print(x.hex())
     i = 0
-    y = 0
+    y = bytearray()
+
+
+
+
     print(x.hex())
     while x != y:
         k = (rand.getrandbits(16)).to_bytes(2, byteorder='big')
         commit = bitarray()
         commit.frombytes(k)
         commit.append(False)
-        y = hashlib.sha1(commit.tobytes()).digest()[:l]
+        y = hashlib.sha1(commit.tobytes()).digest()[:lb]
+        yb = bitarray()
+        yb.frombytes(y)
+        while yb.length() > l:
+            yb.pop(-1)
+        y = yb.tobytes()
         i = i + 1
-        print(i, " ",y.hex(),"\r" ,end='')
-
+        #print(i, " ",y.hex(),x.hex(), yb,xb, "\r",end='')
+    print(i)
     return(i)
 
 def concealing():

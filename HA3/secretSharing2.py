@@ -1,6 +1,6 @@
-ownPoly = [9, 19, 5]
-received = [sum(ownPoly), 37, 18, 40, 44, 28]
-sharedPoly = {1:sum(received), 4:1385, 5:2028}
+ownPoly = [8, 4, 11, 3]
+received = [sum(ownPoly), 34, 39, 39, 50]
+sharedPoly = {1:sum(received), 3:2034, 4:4337, 5:7960}
 
 result = 0
 

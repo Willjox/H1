@@ -18,8 +18,10 @@ ctx = ssl.create_default_context()
 ctx.check_hostname = False
 ctx.verify_mode = ssl.CERT_NONE #Python/min dator/manjaro gillar inte ert certifikat, kan ju lika gärna vara NSA som lyssnar nu!11!
 
-name = input("Name: ")
-grade = input("Grade: ")
+#name = input("Name: ")
+#grade = input("Grade: ")
+name = "kalle"
+grade = "anka"
 for i in range(0, 20):
     testsig = list(sig)
 

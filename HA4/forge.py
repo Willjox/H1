@@ -42,4 +42,5 @@ for i in range(0, 20):
                 print(bestTime)
 
     sig[i] = best
+    bestTime = 0
 print("HAXXXING COMPLETE: ","".join(sig))

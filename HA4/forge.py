@@ -43,4 +43,4 @@ for i in range(0, 20):
 
     sig[i] = best
     bestTime = 0
-print("HAXXXING COMPLETE: ","".join(sig))
+print("HAXXXING COMPLETE: ",print(buildurl(name,sig,grade))

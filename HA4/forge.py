@@ -5,7 +5,7 @@ import ssl
 
 
 hexa = string.hexdigits[:16]
-sig = list("68230000000000000000")
+sig = list("00000000000000000000")
 bestTime = 0
 def buildurl(name,sige,grade):
     return "https://eitn41.eit.lth.se:3119/ha4/addgrade.php?name={}&grade={}&signature={}".format(name,grade,"".join(sige))

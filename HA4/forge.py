@@ -5,10 +5,10 @@ import ssl
 
 
 hexa = string.hexdigits[:16]
-sig = list("00000000000000000000")
+sig = list("68230000000000000000")
 bestTime = 0
-def buildurl(name,sig,grade):
-    return "https://eitn41.eit.lth.se:3119/ha4/addgrade.php?name={}&grade={}&signature={}".format(name,grade,"".join(sig))
+def buildurl(name,sige,grade):
+    return "https://eitn41.eit.lth.se:3119/ha4/addgrade.php?name={}&grade={}&signature={}".format(name,grade,"".join(sige))
 
 print(len(sig))
 print(hexa)
@@ -20,9 +20,9 @@ ctx.verify_mode = ssl.CERT_NONE #Python/min dator/manjaro gillar inte ert certif
 
 #name = input("Name: ")
 #grade = input("Grade: ")
-name = "kalle"
-grade = "anka"
-for i in range(0, 20):
+name = "Kalle"
+grade = "5"
+for i in range(4, 20):
     testsig = list(sig)
 
     for k in hexa:
@@ -37,7 +37,7 @@ for i in range(0, 20):
             urllib.request.urlopen(buildurl(name,testsig,grade), context=ctx)
             stop = time.clock()
             curTime = curTime + (stop-start)
-
+        curTime = curTime/40
         print(curTime)
         if curTime > bestTime:
                 bestTime = curTime

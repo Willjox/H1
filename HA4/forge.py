@@ -30,13 +30,13 @@ for i in range(0, 20):
         curTime  = 0
         print("HAXXXING IN PROGRESS: ","".join(testsig), "\r",end='')
         urllib.request.urlopen(buildurl(name,testsig,grade), context=ctx)
-        for z in range(0,10):
+        for z in range(0,40):
             start = time.clock()
             #urllib.urlopen(buildurl(name,testsig,grade), context=ctx).read()
+            #print(buildurl(name,testsig,grade))
             urllib.request.urlopen(buildurl(name,testsig,grade), context=ctx)
             stop = time.clock()
             curTime = curTime + (stop-start)
-
 
         print(curTime)
         if curTime > bestTime:

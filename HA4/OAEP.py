@@ -32,6 +32,7 @@ def encode(M,seed):
     ps = bytearray(psLen)
     #DB = lHash || PS || 0x01 || M
     DB = bytearray()
+    DB.append(lHash)
     DB.append(PS)
     DB.append(b'x01')
     DB.append(M)

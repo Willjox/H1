@@ -23,8 +23,12 @@ def MGF(??):
 #
 #              T = T || Hash(mgfSeed || C) .
 #
- #  4.  Output the leading maskLen octets of T as the octet string mask.
-def IOSP():
+#  4.  Output the leading maskLen octets of T as the octet string mask.
+
+
+def I2OSP(x,xLen):
+    x = x.to_bytes(xlen,byteorder="big")
+    return x
 
 def encode(M,seed):
     mlen = len(M)

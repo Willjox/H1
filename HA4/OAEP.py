@@ -68,7 +68,7 @@ def encode(M,seed):
     EM += maskedDB
     return EM
 
-def decode(EM,mLen):
+def decode(EM):
     #EM = Y || maskedSeed || maskedDB
     maskedSeed = EM[1:hLen]
     maskedDB = EM[(hLen+1):]
@@ -76,16 +76,28 @@ def decode(EM,mLen):
     seedMask = MGF(maskedDB,hLen)
     dbMask = MGF(seed, (k - hLen -1 ))
     DB = bytes(c1^c2 for c1, c2 in zip(unhexlify(maskedDB.hex()), unhexlify(dbMask.hex())))                                                #maskedDB ^ dbMask
-    M = DB[-mLen:]
+    
+    for i in range(21, len(DB)):
+        print(DB[i])
+        if DB[i] == 1:
+            M = DB[i+1:].hex()
+            return M
+	
+#M = DB[-mLen:]
     print(M.hex())
 
 
     return M
-M=bytearray.fromhex("fd5507e917ecbe833878")
+M=bytearray.fromhex("c107782954829b34dc531c14b40e9ea482578f988b719497aa0687")
 seed = bytearray.fromhex("1e652ec152d0bfcd65190ffc604c0933d0423381")
-EM = bytearray.fromhex("0000255975c743f5f11ab5e450825d93b52a160aeef9d3778a18b7aa067f90b2178406fa1e1bf77f03f86629dd5607d11b9961707736c2d16e7c668b367890bc6ef1745396404ba7832b1cdfb0388ef601947fc0aff1fd2dcd279dabde9b10bfc51f40e13fb29ed5101dbcb044e6232e6371935c8347286db25c9ee20351ee82")
-print((encode(M,seed).hex()))
-print((EM.hex()))
-print(len((EM.hex())))
-if decode(encode(M,seed),len(M)) == M:
-    print("yay")
+EM = bytearray.fromhex("0063b462be5e84d382c86eb6725f70e59cd12c0060f9d3778a18b7aa067f90b2178406fa1e1bf77f03f86629dd5607d11b9961707736c2d16e7c668b367890bc6ef1745396404ba7832b1cdfb0388ef601947fc0aff1fd2dcd279dabde9b10bfc51efc06d40d25f96bd0f4c5d88f32c7d33dbc20f8a528b77f0c16a7b4dcdd8f")
+#print((encode(M,seed).hex()))
+#print((EM.hex()))
+#print(len((EM.hex())))
+#if decode(encode(M,seed),len(M)) == M:
+#    print("yay")
+print(decode(EM))
+
+#print(MGF(bytearray.fromhex("9b4bdfb2c796f1c16d0c0772a5848b67457e87891dbc8214"), 21).hex())
+
+

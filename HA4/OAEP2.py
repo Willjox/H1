@@ -1,26 +1,31 @@
 import hashlib
 import random
 import math
+from binascii import hexlify, unhexlify
 
 lhash = "da39a3ee5e6b4b0d3255bfef95601890afd80709"
 hLen = len(lhash)
 k = 1024/8
 def MGF(seed, mlen):
-    if mlen > 32:
+    if mlen > 2**32:
 	      return "Mask length to long"
     t = ""
+    print(mlen/hLen)
     for i in range(0, math.ceil(mlen/hLen)):
         c = IOSP(i,4)
-
-        t += hashlib.sha1(seed.encode("UTF-8") + c.encode("UTF-8")).hexdigest()
+        print(i)
+        print(c)
+        print(seed)
+        print(hashlib.sha1(bytearray.fromhex(seed + c)).hexdigest())
+        t += hashlib.sha1(bytearray.fromhex(seed + c)).hexdigest()
+        print(t)
     print(mlen)
     return t[:int(2*mlen)]
 
 
 
 def IOSP(x, xlen):
-	x = str(x)
-	return x.zfill(xlen)
+	return hex(x)[2:].zfill(xlen)
   # 1.  If maskLen > 2^32 hLen, output "mask too long" and stop.
   #
   # 2.  Let T be the empty octet string.
@@ -52,10 +57,12 @@ def encode(M,seed):
     DB += M
     print(DB)
     #GIVET? seed = random.getrandbits(hlen*8)).to_bytes(hlen, byteorder='big')
+    print(k-hLen-1)
     dbMask = MGF(seed,(k-hLen-1))
-    maskedDB = ''.join(chr(ord(a) ^ ord(b)) for a,b in zip(DB,dbMask))
+    maskedDB = bytes(c1^c2 for c1, c2 in zip(unhexlify(DB), unhexlify(dbMask))).hex()
+    print(maskedDB)
     seedMask = MGF(maskedDB,hLen)
-    maskedSeed = ''.join(chr(ord(a) ^ ord(b)) for a,b in zip(seed,seedMask))
+    maskedSeed = bytes(c1^c2 for c1, c2 in zip(unhexlify(seed), unhexlify(seedMask))).hex()
     print(maskedDB)
     print(DB)
     print(seedMask)
@@ -86,12 +93,13 @@ def decode(EM,mLen):
     return M
 M = "fd5507e917ecbe833878"
 seed = "1e652ec152d0bfcd65190ffc604c0933d0423381"
-EM = bytearray.fromhex("0000255975c743f5f11ab5e450825d93b52a160aeef9d3778a18b7aa067f90b2178406fa1e1bf77f03f86629dd5607d11b9961707736c2d16e7c668b367890bc6ef1745396404ba7832b1cdfb0388ef601947fc0aff1fd2dcd279dabde9b10bfc51f40e13fb29ed5101dbcb044e6232e6371935c8347286db25c9ee20351ee82")
-
-if encode(M,seed) == EM:
-	print("yay")
-else:
-	print("FAIL")
+EM = "0000255975c743f5f11ab5e450825d93b52a160aeef9d3778a18b7aa067f90b2178406fa1e1bf77f03f86629dd5607d11b9961707736c2d16e7c668b367890bc6ef1745396404ba7832b1cdfb0388ef601947fc0aff1fd2dcd279dabde9b10bfc51f40e13fb29ed5101dbcb044e6232e6371935c8347286db25c9ee20351ee82"
+print(encode(M,seed))
+print(EM)
+#if encode(M,seed) == EM:
+#	print("yay")
+#else:
+#	print("FAIL")
 #if decode(encode(M,seed),len(M)) == M:
  #   print("WEEEE")
 #else:

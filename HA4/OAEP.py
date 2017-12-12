@@ -5,7 +5,7 @@ from binascii import unhexlify
 
 lhash = bytearray.fromhex("da39a3ee5e6b4b0d3255bfef95601890afd80709")
 hLen = len(lhash)
-k = 1024/8
+k = int(1024/8)
 def MGF(seed, mlen):
     #if mlen > 32:
 	 #      return "Maske length to long"
@@ -70,27 +70,28 @@ def encode(M,seed):
 
 def decode(EM):
     #EM = Y || maskedSeed || maskedDB
-    maskedSeed = EM[1:hLen]
-    maskedDB = EM[(hLen+1):]
+    maskedSeed = EM[1:hLen+1]
+    maskedDB = EM[(hLen+1):k]
 
     seedMask = MGF(maskedDB,hLen)
-    dbMask = MGF(seed, (k - hLen -1 ))
+    seed = bytes(c1^c2 for c1, c2 in zip(unhexlify(maskedSeed.hex()), unhexlify(seedMask.hex())))
+    dbMask = MGF(seed, (k - hLen-1 ))
     DB = bytes(c1^c2 for c1, c2 in zip(unhexlify(maskedDB.hex()), unhexlify(dbMask.hex())))                                                #maskedDB ^ dbMask
     
-    for i in range(21, len(DB)):
+    for i in range(hLen, len(DB)):
         print(DB[i])
         if DB[i] == 1:
             M = DB[i+1:].hex()
             return M
 	
 #M = DB[-mLen:]
-    print(M.hex())
+    #print(M.hex())
 
 
-    return M
+    #return M
 M=bytearray.fromhex("c107782954829b34dc531c14b40e9ea482578f988b719497aa0687")
 seed = bytearray.fromhex("1e652ec152d0bfcd65190ffc604c0933d0423381")
-EM = bytearray.fromhex("0063b462be5e84d382c86eb6725f70e59cd12c0060f9d3778a18b7aa067f90b2178406fa1e1bf77f03f86629dd5607d11b9961707736c2d16e7c668b367890bc6ef1745396404ba7832b1cdfb0388ef601947fc0aff1fd2dcd279dabde9b10bfc51efc06d40d25f96bd0f4c5d88f32c7d33dbc20f8a528b77f0c16a7b4dcdd8f")
+EM = bytearray.fromhex("00cbbfadbb0b9e0d96f094a3d6e552b4d82db3e4f4f9d3778a18b7aa067f90b2178406fa1e1bf77f03f86629dd5607d11b9961707736c2d16e7c668b367890bc6ef1745396404ba7832b1cdfb0388ef601947fc0aff1fd2dcd279dabdfcd92a7a13808d96ceea0a999a9947874a4741e7530bd99046c3368c6485702ea93ad95")
 #print((encode(M,seed).hex()))
 #print((EM.hex()))
 #print(len((EM.hex())))

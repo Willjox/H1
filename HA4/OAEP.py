@@ -26,13 +26,7 @@ def MGF(??):
  #  4.  Output the leading maskLen octets of T as the octet string mask.
 def IOSP():
 
-def DB(lhash,PS,M):
-        DB = bytearray()
-        DB.append(PS)
-        DB.append(b'x01')
-        DB.append(M)
-
-def encode(M):
+def encode(M,seed):
     mlen = len(M)
     psLen = (k - mLen - (2*hLen) + 2)
     ps = bytearray(psLen)
@@ -41,7 +35,7 @@ def encode(M):
     DB.append(PS)
     DB.append(b'x01')
     DB.append(M)
-    randOct = random.getrandbits(hlen*8)).to_bytes(hlen, byteorder='big')
+    #GIVET? seed = random.getrandbits(hlen*8)).to_bytes(hlen, byteorder='big')
     dbMask = MGF(seed,(k-hLen-1))
     maskedDB = DB ^ dbMask
     seedMask = MGF(maskedDB,hlen)
@@ -53,15 +47,15 @@ def encode(M):
 
     return EM
 
-def decode(EM):
+def decode(EM,mLen):
     #EM = Y || maskedSeed || maskedDB
-    maskedSeed = EM[1:????]
-    maskedDB = EM[??:-1]
+    maskedSeed = EM[1:hlen]
+    maskedDB = EM[(hLen+1):-1]
 
     seedMask = MGF(maskedDB,hLen)
     dbMask = MGF(seed, (k - hlen -1 ))
     DB = maskedDB ^ dbMask
-    #DB = lHash' || PS || 0x01 || M
+    M = DB[-mLen:]
 
 
     return M

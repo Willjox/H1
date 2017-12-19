@@ -89,9 +89,9 @@ def main():
 	
 	key = base64_der_rsa(p, q)
 	key_64 = base64.b64encode(binascii.unhexlify(key))
-	print("rsa:", key)
+	#print("rsa:", key)
 	#print()
-	#print("base64:", str(key_64)[2:-1])
+	print("base64:", str(key_64)[2:-1])
 	
 if __name__ == "__main__":
 	main()
